@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Informar Actividad</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <div id="val-box" hidden>
+            <h2 id="val-msg"></h2>
+            <ul id="val-list"></ul>
+        </div>
+        <form id="formulario" name="myForm" method="post" enctype="multipart/form-data">
+            <label><span style="color: grey; font-size: smaller;">(Los campos con <span style="color: red;">*</span> son obligatorios)</span></label>
+            <h3>¿Dónde?:</h3>
+            <label for="select-region">Región<span style="color: red;">*</span></label>
+            <select name="select-region" id="select-region" required>
+                <option value="">Seleccione una región</option>
+            </select><br>
+
+            <label for="select-comuna">Comuna<span style="color: red;">*</span></label>
+            <select name="select-comuna" id="select-comuna" required>
+                <option value="">Seleccione una comuna</option>
+            </select><br>
+
+            <label for="sector">Sector<span style="color: grey; font-size: smaller;"> (máx. 100 caracteres)</span></label>
+            <input type="text" name="sector" id="sector" maxlength="100"><br>
+
+            <h3>¿Quién organiza?:</h3>
+            <label for="nombre">Nombre<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (máx. 200 caracteres)</span></label>
+            <input type="text" name="nombre" id="nombre" maxlength="200" required><br>
+
+            <label for="email">Email<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (máx. 100 caracteres)</span></label>
+            <input type="email" name="email" id="email" maxlength="100" required><br>
+
+            <label for="phone">Número de Celular <span style="color: grey; font-size: smaller;">(Formato: +569.12345678)</span></label>
+            <input type="tel" name="phone" id="phone"><br><br>
+
+            <label for="contacto">Contactar por: <span style="color: grey; font-size: smaller;">(máx 5)</span></label>
+            <input type="checkbox" class="platform-cb" name="whatsapp" onclick="revisaCheck(this);">Whatsapp
+            <input id="whatsapp" class="platform-id" type="text" name="whatsapp-id" placeholder="Número de teléfono o URL" style="display:none;"><br>
+            <input type="checkbox" class="platform-cb" name="telegram" onclick="revisaCheck(this);">Telegram
+            <input id="telegram" class="platform-id" type="text" name="telegram-id" placeholder="Número de teléfono, ID o URL" style="display:none;"><br>
+            <input type="checkbox" class="platform-cb" name="instagram" onclick="revisaCheck(this);">Instagram
+            <input id="instagram" class="platform-id" type="text" name="instagram-id" placeholder="ID o URL" style="display:none;"><br>
+            <input type="checkbox" class="platform-cb" name="x" onclick="revisaCheck(this);">X
+            <input id="x" class="platform-id" type="text" name="x-id" placeholder="ID o URL" style="display:none;"><br>
+            <input type="checkbox" class="platform-cb" name="tiktok" onclick="revisaCheck(this);">TikTok
+            <input id="tiktok" class="platform-id" type="text" name="tiktok-id" placeholder="ID o URL" style="display:none;"><br>
+            <input type="checkbox" class="platform-cb" name="otra-plataforma" onclick="revisaCheck(this);">Otra <span id="plataforma-extra" style="display: inline;"></span>
+            <input id="otra-plataforma" class="platform-id" type="text" name="otra-plataforma-id" placeholder="ID o URL" style="display:none;"><br>
+            <label><span style="color: grey; font-size: smaller;">-Si escoge una plataforma, la ID o URL debe contener entre 4 y 100 caracteres</span></label>
+
+            <h3>¿Cuándo y de qué trata?:</h3>
+
+            <label for="dia-hora-inicio">Día y Hora de Inicio<span style="color: red;">*</span></label>
+            <input type="datetime-local" name="dia-hora-inicio" id="dia-hora-inicio" required><br><br>
+
+            <label for="dia_hora_termino">Día y Hora de Término</label>
+            <input type="datetime-local" name="dia-hora-termino" id="dia-hora-termino"><br>
+            <label><span style="color: grey; font-size: smaller;">-Si se informa una fecha de término, esta debe ser mayor a la fecha de inicio</span></label><br>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea name="descripcion" id="descripcion-id" rows="10" cols="50" placeholder="Descripción de la actividad. (Opcional)"></textarea><br><br>
+
+            <label for="temas">Temas(s)<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (mín. 1)</span></label>
+            <input type="checkbox" class="tema-cb" name="Música">Música<br>
+            <input type="checkbox" class="tema-cb" name="Deporte">Deporte<br>
+            <input type="checkbox" class="tema-cb" name="Ciencias">Ciencias<br>
+            <input type="checkbox" class="tema-cb" name="Religión">Religión<br>
+            <input type="checkbox" class="tema-cb" name="Política">Política<br>
+            <input type="checkbox" class="tema-cb" name="Tecnología">Tecnología<br>
+            <input type="checkbox" class="tema-cb" name="Juegos">Juegos<br>
+            <input type="checkbox" class="tema-cb" name="Baile">Baile<br>
+            <input type="checkbox" class="tema-cb" name="Comida">Comida<br>
+            <input type="checkbox" class="tema-cb" name="Otro" onclick="revelarDesc(this)">Otro<br>
+            <input type="text" name="otro-tema" id="otro-tema-id" rows="10" cols="50" placeholder="Por favor describa el tema entre 3 y 15 caracteres." minlength="3" maxlength="15" style="display: none;"><br>
+        
+            <label for="fotos">Imágenes<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (mín. 1 | máx. 5)</span></label>
+            <div id="fotos-id">
+            <input type="file" name="fotos[]" id="foto-id-0" class="foto-input" accept="image/*,.pdf" onchange="revelarAddFoto()" required>
+            </div>
+            <button type="button" id="add-foto-btn" style="display: none;">+foto</button>
+            <br><br>
+
+            <button id="submit-btn" type="button">Agregar esta actividad</button>
+        </form>
+        <div id="mensajeGracias" style="display: none;">
+            <p>Hemos recibido su información, muchas gracias y suerte en su actividad.</p>
+            <button id="volverPortada" onclick="volverPortada()">Volver a la portada</button>
+        </div>
+    </div>
+    <script src="./js/region_comuna.js"></script>
+    <script src="./js/select.js"></script>
+    <script src="./js/validation.js"></script>
+</body>
+</html>
