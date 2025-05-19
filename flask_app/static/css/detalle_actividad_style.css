@@ -1,0 +1,31 @@
+
+  #modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+    text-align: center;
+  }
+
+  #modal-img {
+    width: 800px;
+    height: 600px;
+    background-size: 100% 100%;
+    border: 1px solid rgb(6, 124, 101);
+  }
+
+  .close {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+  }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<title>Listado de Actividades</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/listado_actividades_style.css') }}">
+
+<nav>
+  <ul style="list-style: none; padding: 0;">
+    <li><a href="{{ url_for('index') }}">Regresar a la portada</a></li>
+    <li><a href="{{ url_for('informar_actividad') }}">Informar Actividad</a></li>
+    <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+  </ul>
+</nav>
+
+<div id="actividad-list">
+  <table>
+    <tr>
+      <th>Inicio</th>
+      <th>Término</th>
+      <th>Comuna</th>
+      <th>Sector</th>
+      <th>Temas</th>
+      <th>Entidad Organizadora</th>
+      <th>Fotos</th>
+    </tr>
+    {% if data %}
+      {% for item in data %}
+      <tr onclick="window.location='/actividad/{{ item.actividad.id }}'" style="cursor: pointer;">
+        <td>{{ item.actividad.dia_hora_inicio.strftime('%d/%m/%Y<br>%H:%M') | safe }}</td>
+        <td>
+          {{ item.actividad.dia_hora_termino.strftime('%d/%m/%Y %H:%M') if item.actividad.dia_hora_termino else '-' }}
+        </td>
+        <td>{{ item.comuna.nombre }}</td>
+        <td>{{ item.actividad.sector or '-' }}</td>
+        <td>
+          {% for tema in item.temas %}
+            <div>
+              {% if tema.tema == 'otro' %}
+                -{{ tema.glosa_otro }}
+              {% else %}
+                -{{ tema.tema }}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </td>
+        <td>{{item.actividad.nombre}}</td>
+        <td>
+          {% for foto in item.fotos %}
+            <img src="{{ url_for('static', filename=foto.ruta_archivo) }}" alt="No description available yet." width="120" height="90" class="img-thumbnail" style="margin: 2px;">
+          {% endfor %}
+        </td>
+
+      </tr>
+      {% endfor %}
+    {% endif %}
+  </table>
+
+  <!-- Paginación -->
+  {% if actividades.items %}
+  <div class="pagination">
+    {% if actividades.has_prev %}
+      <a href="{{ url_for('listado_actividades', page=actividades.prev_num) }}">« Anterior</a>
+    {% else %}
+      <span class="disabled">« Anterior</span>
+    {% endif %}
+
+    {% for page_num in actividades.iter_pages() %}
+      {% if page_num %}
+        {% if page_num == actividades.page %}
+          <strong>{{ page_num }}</strong>
+        {% else %}
+          <a href="{{ url_for('listado_actividades', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        <span>...</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if actividades.has_next %}
+      <a href="{{ url_for('listado_actividades', page=actividades.next_num) }}">Siguiente »</a>
+    {% else %}
+      <span class="disabled">Siguiente »</span>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+</body>
+</html>
