@@ -103,3 +103,17 @@ button#submit-btn:hover {
         font-size: 14px;
     }
 }
+
+.flash.error {
+  background-color: #ffdddd;
+  border-left: 6px solid #f44336;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.flash.success {
+  background-color: #ddffdd;
+  border-left: 6px solid #4CAF50;
+  padding: 10px;
+  margin-bottom: 10px;
+}

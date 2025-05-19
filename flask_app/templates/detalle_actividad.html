@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Detalle de Actividad</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/detalle_actividad_style.css') }}">
+</head>
+<body>
+
+<div class="ficha">
+  <p><strong>Entidad Organizadora:</strong> {{ data.actividad.nombre }}</p>
+  <p><strong>Región:</strong> {{ data.region.nombre }}</p>
+  <p><strong>Comuna:</strong> {{ data.comuna.nombre }}</p>
+  <p><strong>Sector:</strong> {{ data.actividad.sector or '-' }}</p>
+  <p><strong>Email:</strong> {{ data.actividad.email }}</p>
+  <p><strong>Celular:</strong> {{ data.actividad.celular or '-' }}</p>
+  <p><strong>Inicio:</strong> {{ data.actividad.dia_hora_inicio.strftime('%d/%m/%Y %H:%M') }}</p>
+  <p><strong>Término:</strong> {{ data.actividad.dia_hora_termino.strftime('%d/%m/%Y %H:%M') if data.actividad.dia_hora_termino else '-' }}</p>
+  <p><strong>Descripción:</strong> {{ data.actividad.descripcion or '-' }}</p>
+
+  <p><strong>Temas:</strong>
+    <ul>
+      {% for tema in data.temas %}
+        <li> {% if tema.tema == 'otro' %}
+          {{ tema.glosa_otro }}
+        {% else %}
+          {{ tema.tema }}
+        {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </p>
+
+  <p><strong>Contactos:</strong>
+    {% if data.contactos %}
+      <ul>
+        {% for contacto in data.contactos %}
+          <li>{{ contacto.nombre }}: {{ contacto.identificador }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      No se informaron medios de contacto.
+    {% endif %}
+  </p>
+
+  <p><strong>Fotos:</strong></p>
+  <div class="fotos-preview">
+    {% for foto in data.fotos %}
+      <img src="{{ url_for('static', filename=foto.ruta_archivo) }}" alt="No description available yet." width="320" height="240"
+        onclick="mostrarModal('{{ url_for('static', filename=foto.ruta_archivo) }}')">
+    {% endfor %}
+  </div>
+
+  <div class="btn-links">
+    <a href="{{ url_for('listado_actividades') }}">← Volver al listado</a> |
+    <a href="{{ url_for('index') }}">← Volver a la portada</a>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" onclick="cerrarModal()">
+  <span class="close" onclick="event.stopPropagation(); cerrarModal();">&times;</span>
+  <img id="modal-img" alt="No description available yet." onclick="event.stopPropagation();">
+</div>
+
+<script>
+  function mostrarModal(src) {
+    document.getElementById("modal-img").src = src;
+    document.getElementById("modal").style.display = "block";
+  }
+  function cerrarModal() {
+    document.getElementById("modal").style.display = "none";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>Inicio</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/listado_actividades_style.css') }}">
+</head>
+
+<body>
+
+<div id="mensajeBienvenida">
+<h2 style="text-align: center; color: darkgreen;">¡Bienvenid@ a la Plataforma de Actividades Recreativas!</h2>
+<p style="text-align: center;">Aquí podrás informar, visualizar y explorar actividades en distintas comunas del país.</p>
+</div>
+
+<div id="mensajeGracias" style="display: none;">
+  <p>Hemos recibido su información, muchas gracias y suerte en su actividad.</p>
+</div>
+
+<nav>
+  <ul style="list-style: none; padding: 0;">
+    <li><a href="{{ url_for('informar_actividad') }}">Informar Actividad</a></li>
+    <li><a href="{{ url_for('listado_actividades') }}">Listado de Actividades</a></li>
+    <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+  </ul>
+</nav>
+
+<div id="actividad-list-index">
+  <table>
+    <tr>
+      <th>Inicio</th>
+      <th>Término</th>
+      <th>Comuna</th>
+      <th>Sector</th>
+      <th>Temas</th>
+      <th>Foto</th>
+    </tr>
+    {% if data %}
+      {% for item in data %}
+      <tr>
+        <td>{{ item.actividad.dia_hora_inicio.strftime('%d/%m/%Y<br>%H:%M') | safe }}</td>
+        <td>
+          {% if item.actividad.dia_hora_termino %}
+            {{ item.actividad.dia_hora_termino.strftime('%d/%m/%Y<br>%H:%M') | safe }}
+          {% else %} -
+          {% endif %}
+        </td>
+        <td>{{ item.comuna.nombre }}</td>
+        <td>{{ item.actividad.sector or '-' }}</td>
+        <td>
+          {% for tema in item.temas %}
+            <div>
+              {% if tema.tema == 'otro' %}
+                -{{ tema.glosa_otro }}
+              {% else %}
+                -{{ tema.tema }}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </td>
+        <td>
+          <img src="{{ url_for('static', filename=item.fotos[0].ruta_archivo) }}" alt="No description available yet." width="120" height="90" class="img-thumbnail" style="margin: 2px;">
+        </td>
+
+      </tr>
+      {% endfor %}
+    {% endif %}
+  </table>
+</div>
+
+{% if gracias %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('mensajeGracias').style.display = 'block';
+    document.getElementById('mensajeBienvenida').style.display = 'none';
+  });
+</script>
+{% endif %}
+
+</body>
+</html>

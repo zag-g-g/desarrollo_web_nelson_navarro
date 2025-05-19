@@ -1,16 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 	<title>Informar Actividad</title>
-    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    
     <div class="main-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div id="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
         <div id="val-box" hidden>
             <h2 id="val-msg"></h2>
             <ul id="val-list"></ul>
         </div>
-        <form id="formulario" name="myForm" method="post" enctype="multipart/form-data">
+        <p id="bajada"></p>
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        <form id="formulario" action='informar_actividad' name="myForm" method="post" enctype="multipart/form-data">
             <label><span style="color: grey; font-size: smaller;">(Los campos con <span style="color: red;">*</span> son obligatorios)</span></label>
             <h3>¿Dónde?:</h3>
             <label for="select-region">Región<span style="color: red;">*</span></label>
@@ -36,7 +53,7 @@
             <label for="phone">Número de Celular <span style="color: grey; font-size: smaller;">(Formato: +569.12345678)</span></label>
             <input type="tel" name="phone" id="phone"><br><br>
 
-            <label for="contacto">Contactar por: <span style="color: grey; font-size: smaller;">(máx 5)</span></label>
+            <label>Contactar por: <span style="color: grey; font-size: smaller;">(máx 5)</span></label>
             <input type="checkbox" class="platform-cb" name="whatsapp" onclick="revisaCheck(this);">Whatsapp
             <input id="whatsapp" class="platform-id" type="text" name="whatsapp-id" placeholder="Número de teléfono o URL" style="display:none;"><br>
             <input type="checkbox" class="platform-cb" name="telegram" onclick="revisaCheck(this);">Telegram
@@ -56,27 +73,27 @@
             <label for="dia-hora-inicio">Día y Hora de Inicio<span style="color: red;">*</span></label>
             <input type="datetime-local" name="dia-hora-inicio" id="dia-hora-inicio" required><br><br>
 
-            <label for="dia_hora_termino">Día y Hora de Término</label>
+            <label for="dia-hora-termino">Día y Hora de Término</label>
             <input type="datetime-local" name="dia-hora-termino" id="dia-hora-termino"><br>
             <label><span style="color: grey; font-size: smaller;">-Si se informa una fecha de término, esta debe ser mayor a la fecha de inicio</span></label><br>
 
-            <label for="descripcion">Descripción:</label>
+            <label for="descripcion-id">Descripción:</label>
             <textarea name="descripcion" id="descripcion-id" rows="10" cols="50" placeholder="Descripción de la actividad. (Opcional)"></textarea><br><br>
 
-            <label for="temas">Temas(s)<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (mín. 1)</span></label>
-            <input type="checkbox" class="tema-cb" name="Música">Música<br>
-            <input type="checkbox" class="tema-cb" name="Deporte">Deporte<br>
-            <input type="checkbox" class="tema-cb" name="Ciencias">Ciencias<br>
-            <input type="checkbox" class="tema-cb" name="Religión">Religión<br>
-            <input type="checkbox" class="tema-cb" name="Política">Política<br>
-            <input type="checkbox" class="tema-cb" name="Tecnología">Tecnología<br>
-            <input type="checkbox" class="tema-cb" name="Juegos">Juegos<br>
-            <input type="checkbox" class="tema-cb" name="Baile">Baile<br>
-            <input type="checkbox" class="tema-cb" name="Comida">Comida<br>
-            <input type="checkbox" class="tema-cb" name="Otro" onclick="revelarDesc(this)">Otro<br>
-            <input type="text" name="otro-tema" id="otro-tema-id" rows="10" cols="50" placeholder="Por favor describa el tema entre 3 y 15 caracteres." minlength="3" maxlength="15" style="display: none;"><br>
+            <label>Temas(s)<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (mín. 1)</span></label>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Música">Música<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Deporte">Deporte<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Ciencias">Ciencias<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Religión">Religión<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Política">Política<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Tecnología">Tecnología<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Juegos">Juegos<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Baile">Baile<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Comida">Comida<br>
+            <input type="checkbox" class="tema-cb" name="temas[]" value="Otro" id="otro-tema-cb-id" onclick="revelarDesc(this)">Otro<br>
+            <input type="text" name="otro-tema" id="otro-tema-id" placeholder="Por favor describa el tema entre 3 y 15 caracteres." minlength="3" maxlength="15" style="display: none;"><br>
         
-            <label for="fotos">Imágenes<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (mín. 1 | máx. 5)</span></label>
+            <label>Imágenes<span style="color: red;">*</span><span style="color: grey; font-size: smaller;"> (mín. 1 | máx. 5) | Sólo la primera imagen se mostrará en la página de inicio </span></label>
             <div id="fotos-id">
             <input type="file" name="fotos[]" id="foto-id-0" class="foto-input" accept="image/*,.pdf" onchange="revelarAddFoto()" required>
             </div>
@@ -85,13 +102,13 @@
 
             <button id="submit-btn" type="button">Agregar esta actividad</button>
         </form>
-        <div id="mensajeGracias" style="display: none;">
-            <p>Hemos recibido su información, muchas gracias y suerte en su actividad.</p>
-            <button id="volverPortada" onclick="volverPortada()">Volver a la portada</button>
-        </div>
     </div>
-    <script src="./js/region_comuna.js"></script>
-    <script src="./js/select.js"></script>
-    <script src="./js/validation.js"></script>
+
+
+    <script>
+        const region_comuna = {{ region_comuna | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/select.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/validation.js') }}"></script>
 </body>
 </html>

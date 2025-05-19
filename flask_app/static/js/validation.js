@@ -8,8 +8,9 @@ const validateName = (name) => {
 
 const validateEmail = (email) => {
   if (!email) return false;
-  let lengthValid = email.trim().length <= 100;
-  let re = /^[\w.]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+  email = email.trim()
+  let lengthValid = email.length <= 100;
+  let re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   let formatValid = re.test(email);
 
   return lengthValid && formatValid;
@@ -17,6 +18,9 @@ const validateEmail = (email) => {
 
 const validateNumCelular = (num_celular) => {
   if (!num_celular) return true;
+  num_celular = num_celular.trim()
+  if (num_celular == '') return true
+
   let re = /^\+\d{3}\.\d{8}$/;
   let formatValid = re.test(num_celular);
 
@@ -27,56 +31,57 @@ const validateContactos = (contactos) => {
   for (cb of contactos) {
     if (cb.checked) {
       plat = document.getElementById(cb.name);
-      plat_val = plat.value;
-      lengthValid = (plat_val.trim().length >= 4) && (plat_val.trim().length <= 50);
+      val = plat.value.trim();
+      lengthValid = (val.length >= 4) && (val.length <= 50);
 
       if (!lengthValid) return false;
 
+
       if (plat.id === "whatsapp") {
         const re_num = /^\+?[1-9]\d{1,14}$/;
-        const formatValid_num = re_num.test(plat);
+        const formatValid_num = re_num.test(val);
 
         const re_url = /^(https?:\/\/)?(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com)\/send/i;
-        const formatValid_url = re_url.test(plat);
+        const formatValid_url = re_url.test(val);
         
         if (!(formatValid_num || formatValid_url)) return false;
       }
       if (plat.id === "telegram") {
         const re_num = /^\+?[1-9]\d{1,14}$/;
-        const formatValid_num = re_num.test(plat.value);
+        const formatValid_num = re_num.test(val);
 
         const re_username = /^@[a-zA-Z0-9_]{5,32}$/;
-        const formatValid_username = re_username.test(plat.value);
+        const formatValid_username = re_username.test(val);
       
         const re_url = /^(https?:\/\/)?(t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,32}$/i;
-        const formatValid_url = re_url.test(plat.value);
+        const formatValid_url = re_url.test(val);
 
         if (!(formatValid_num || formatValid_username || formatValid_url)) return false;
       }
       if (plat.id === "instagram") {
         const re_username = /^@?[a-zA-Z0-9._]{1,30}$/;
-        const formatValid_username = re_username.test(plat.value);
+        const formatValid_username = re_username.test(val);
       
         const re_url = /^(https?:\/\/)?(www\.)?instagram\.com\/[a-zA-Z0-9._]{1,30}$/i;
-        const formatValid_url = re_url.test(plat.value);
+        const formatValid_url = re_url.test(val);
       
         if (!(formatValid_username || formatValid_url)) return false;
       }
       if (plat.id === "x") {
         const re_username = /^@?[a-zA-Z0-9_]{1,15}$/;
-        const formatValid_username = re_username.test(plat.value);
+        const formatValid_username = re_username.test(val);
       
         const re_url = /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/i;
-        const formatValid_url = re_url.test(plat.value);
+        const formatValid_url = re_url.test(val);
       
         if (!(formatValid_username || formatValid_url)) return false;
       }
       if (plat.id === "tiktok") {
         const re_username = /^@?[a-zA-Z0-9_]{2,24}$/;
-        const formatValid_username = re_username.test(plat.value);
+        const formatValid_username = re_username.test(val);
       
         const re_url = /^(https?:\/\/)?(www\.)?tiktok\.com\/@([a-zA-Z0-9_]{2,24})$/i;
-        const formatValid_url = re_url.test(plat.value);
+        const formatValid_url = re_url.test(val);
       
         if (!(formatValid_username || formatValid_url)) return false;
       }
@@ -110,7 +115,7 @@ const validateTemas = (temas_cb) => {
 };
 
 const validateTemaExtra = (tema) => {
-  const tema_extra_cb = document.getElementsByName("Otro")[0];
+  const tema_extra_cb = document.getElementById("otro-tema-cb-id");
   const lengthValid = (tema.trim().length >= 3) && (tema.trim().length <= 15);
 
   return (!tema_extra_cb.checked || lengthValid);
@@ -143,13 +148,12 @@ const validateSelect = (select) => {
   return true;
 };
 
-const volverPortada = () => {
-  window.location.href = 'index.html';
+const volverPortada = (ruta) => {
+  window.location.href = ruta;
 }
 
 const validateForm = () => {
   // obtener elementos del DOM usando el nombre del formulario.
-  console.log("validate");
   let myForm = document.forms["myForm"];
   let region = myForm["select-region"].value;
   let comuna = myForm["select-comuna"].value;
@@ -211,7 +215,6 @@ const validateForm = () => {
   let validationBox = document.getElementById("val-box");
   let validationMessageElem = document.getElementById("val-msg");
   let validationListElem = document.getElementById("val-list");
-  let formContainer = document.querySelector(".main-container");
 
   if (!isValid) {
     validationListElem.textContent = "";
@@ -236,7 +239,7 @@ const validateForm = () => {
     myForm.style.display = "none";
 
     // establecer mensaje de éxito
-    validationMessageElem.innerText = "¿Está seguro que desea agregar esta actividad?";
+    validationMessageElem.innerText = "¿Está segur@ que desea agregar esta actividad?";
     validationListElem.textContent = "";
 
     // aplicar estilos de éxito
@@ -245,15 +248,15 @@ const validateForm = () => {
 
     // Agregar botones para enviar el formulario o volver
     let submitButton = document.createElement("button");
-    submitButton.innerText = "Sí, estoy seguro";
+    submitButton.innerText = "Sí, estoy segur@";
     submitButton.style.marginRight = "10px";
+    submitButton.type = "button";
     submitButton.addEventListener("click", () => {
-    formulario.style.display = 'none';
-    mensajeGracias.style.display = 'block';
+    myForm.submit();
     });
 
     let backButton = document.createElement("button");
-    backButton.innerText = "No, no estoy seguro, quiero volver al formulario";
+    backButton.innerText = "No, no estoy segur@, quiero volver al formulario";
     backButton.addEventListener("click", () => {
       // Mostrar el formulario nuevamente
       myForm.style.display = "block";

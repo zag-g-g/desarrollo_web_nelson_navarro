@@ -1,5 +1,6 @@
 const poblarRegiones = () => {
-  let regionSelect = document.getElementById("select-region");
+  const regionSelect = document.getElementById("select-region");
+
   for (const region in region_comuna) {
     let option = document.createElement("option");
     option.value = region;
@@ -9,19 +10,17 @@ const poblarRegiones = () => {
 };
 
 const updateComunas = () => {
-  let regionSelect = document.getElementById("select-region");
-  let comunaSelect = document.getElementById("select-comuna");
-  let selectedRegion = regionSelect.value;
-  
+  const region = document.getElementById("select-region").value;
+  const comunaSelect = document.getElementById("select-comuna");
   comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
-  
-  if (region_comuna[selectedRegion]) {
-      region_comuna[selectedRegion].forEach(comuna => {
-          let option = document.createElement("option");
-          option.value = comuna;
-          option.text = comuna;
-          comunaSelect.appendChild(option);
-      });
+
+  if (region_comuna[region]) {
+    region_comuna[region].forEach(comuna => {
+      let option = document.createElement("option");
+      option.value = comuna;
+      option.text = comuna;
+      comunaSelect.appendChild(option);
+    });
   }
 };
 
