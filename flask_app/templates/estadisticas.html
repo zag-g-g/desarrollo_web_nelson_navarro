@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>Estadísticas</title>
+    <title>Estadísticas</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body>
+    <h1 style="text-align: center; margin-bottom: 30px;">Estadísticas de Actividades</h1>
 
-<img src="{{ url_for('static', filename='images/grafos.png') }}" alt="Se muestran 3 gráficos: El primero es de líneas, que informa la cantidad de
-actividades por día. En el eje X muestra los días y en el eje Y muestra la cantidad de
-actividades. El segundo gráfico es un gráfico de torta que muestra el total de actividades
-por tipo. El tercer gráfico es uno de barras que muestra tres barras por cada punto del
-eje X. El eje X son los meses y para cada mes muestra una barra con la cantidad de
-actividades que se inician en la mañana, la cantidad de actividades que se inician al
-mediodía y la cantidad de actividades de la tarde. El eje Y indica la cantidad." width="320" height="240">
-<a href="{{ url_for('index') }}">← Volver a la portada</a>
+    <div style="width: 500px; height: 300px;">
+        <canvas id="graficoLineas" style="display: block; margin-bottom: 20px;"></canvas>
+        <canvas id="graficoTorta" style="display: block; margin-bottom: 20px;"></canvas>
+        <canvas id="graficoBarras" style="display: block; margin-bottom: 20px;"></canvas>
+    </div>
+
+    <a href="{{ url_for('index') }}">← Volver a la portada</a>
+
+    <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+</body>
 </html>

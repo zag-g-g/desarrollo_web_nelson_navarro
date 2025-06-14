@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from werkzeug.utils import secure_filename
 import hashlib
 import filetype
@@ -7,6 +7,7 @@ from datetime import datetime
 from markupsafe import escape
 from utils.validations import validate_actividad
 from database import db
+from database.db import SessionLocal, Comentario
 
 app = Flask(__name__)
 app.secret_key = "s1cr3_tek3y"
@@ -25,6 +26,22 @@ def index():
 @app.route('/estadisticas', methods=['GET'])
 def estadisticas():
     return render_template('estadisticas.html')
+
+@app.route('/api/estadisticas')
+def api_estadisticas():
+    (actividades_por_dia, actividades_por_tema, meses_ordenados, franja_por_mes) = db.get_estadisticas()
+    return jsonify({
+        'actividades_por_dia': [
+            {'fecha': str(f[0]), 'cantidad': f[1]} for f in actividades_por_dia
+        ],
+        'actividades_por_tema': [
+            {'tema': f[0], 'cantidad': f[1]} for f in actividades_por_tema
+        ],
+        'actividades_por_franja_mes': {
+            mes: franja_por_mes[mes] for mes in meses_ordenados
+        }
+    })
+
 
 # Formulario
 @app.route('/informar_actividad', methods=['GET', 'POST'])
@@ -132,6 +149,43 @@ def ver_actividad(actividad_id):
         flash("Actividad no encontrada.", "error")
         return redirect(url_for('listado_actividades'))
     return render_template('detalle_actividad.html', data=data)
+
+
+
+@app.route('/api/comentarios/<int:actividad_id>', methods=['GET'])
+def api_get_comentarios(actividad_id):
+    db = SessionLocal()
+    comentarios = db.query(Comentario).filter_by(actividad_id=actividad_id).order_by(Comentario.fecha.desc()).all()
+    db.close()
+    return jsonify([{
+        'nombre': c.nombre,
+        'texto': c.texto,
+        'fecha': c.fecha.strftime('%d/%m/%Y %H:%M')
+    } for c in comentarios])
+
+@app.route('/api/comentarios/<int:actividad_id>', methods=['POST'])
+def api_post_comentario(actividad_id):
+    data = request.get_json()
+    nombre = data.get("nombre", "").strip()
+    texto = data.get("texto", "").strip()
+
+    if not (3 <= len(nombre) <= 80):
+        return jsonify(ok=False, error="El nombre debe contener entre 3 y 80 caracteres."), 400
+    if len(texto) < 5:
+        return jsonify(ok=False, error="El comentario debe contener al menos 5 caracteres"), 400
+
+    db = SessionLocal()
+    comentario = Comentario(
+        nombre=nombre,
+        texto=texto,
+        fecha=datetime.now(),
+        actividad_id=actividad_id
+    )
+    db.add(comentario)
+    db.commit()
+    db.close()
+    return jsonify(ok=True)
+
 
 
 if __name__ == '__main__':

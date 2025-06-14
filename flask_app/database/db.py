@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, BigInteger, String, ForeignKey, DateTime, Enum
+from sqlalchemy import create_engine, Column, Integer, BigInteger, String, ForeignKey, DateTime, Enum, extract, func
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from datetime import datetime
 from collections import defaultdict #para crear un diccionario js con regiones y sus comunas
@@ -56,6 +56,8 @@ class Actividad(Base):
     fotos = relationship("Foto", back_populates="actividad", cascade="all, delete-orphan")
     contactos = relationship("ContactarPor", back_populates="actividad", cascade="all, delete-orphan")
     temas = relationship("ActividadTema", back_populates="actividad", cascade="all, delete-orphan")
+    comentarios = relationship("Comentario", back_populates="actividad", cascade="all, delete-orphan")
+
 
 
 class Foto(Base):
@@ -109,6 +111,16 @@ class Paginador:
 
 
 
+class Comentario(Base):
+    __tablename__ = 'comentario'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nombre = Column(String(80), nullable=False)
+    texto = Column(String(300), nullable=False)
+    fecha = Column(DateTime, nullable=False)
+    actividad_id = Column(Integer, ForeignKey('actividad.id'), nullable=False)
+
+    actividad = relationship("Actividad", back_populates="comentarios")
 
 
 
@@ -272,6 +284,54 @@ def get_full_actividad_data(actividad_id):
 
     db.close()
     return result
+
+
+
+
+def get_estadisticas():
+    db = SessionLocal()
+
+    # --- Gráfico 1: actividades por día (últimos 5 días con actividades)
+    actividades_por_dia = (
+        db.query(func.date(Actividad.dia_hora_inicio), func.count())
+        .group_by(func.date(Actividad.dia_hora_inicio))
+        .order_by(func.date(Actividad.dia_hora_inicio).desc())
+        .all()
+    )
+    actividades_por_dia.reverse()  # Para que vayan en orden ascendente de fecha
+
+    # --- Gráfico 2: actividades por tipo (tema)
+    actividades_por_tema = (
+        db.query(ActividadTema.tema, func.count())
+        .group_by(ActividadTema.tema)
+        .all()
+    )
+
+    # --- Gráfico 3: actividades por franja horaria por mes (últimos 3 meses)
+    actividades = db.query(
+        extract('month', Actividad.dia_hora_inicio).label('mes'),
+        extract('year', Actividad.dia_hora_inicio).label('anio'),
+        extract('hour', Actividad.dia_hora_inicio).label('hora')
+    ).all()
+
+    franja_por_mes = {}
+    for a in actividades:
+        mes_str = f"{int(a.anio)}-{int(a.mes):02d}"
+        if mes_str not in franja_por_mes:
+            franja_por_mes[mes_str] = {'mañana': 0, 'mediodía': 0, 'tarde': 0}
+        if 6 <= a.hora < 12:
+            franja_por_mes[mes_str]['mañana'] += 1
+        elif 12 <= a.hora < 18:
+            franja_por_mes[mes_str]['mediodía'] += 1
+        else:
+            franja_por_mes[mes_str]['tarde'] += 1
+
+    # Ordena los meses por fecha
+    meses_ordenados = sorted(franja_por_mes.keys())[-3:]
+
+    db.close()
+
+    return (actividades_por_dia, actividades_por_tema, meses_ordenados, franja_por_mes)
 
 
 

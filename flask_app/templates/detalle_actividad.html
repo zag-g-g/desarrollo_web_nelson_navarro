@@ -63,15 +63,38 @@
   <img id="modal-img" alt="No description available yet." onclick="event.stopPropagation();">
 </div>
 
+<!-- Comentarios -->
+<h2>Comentarios</h2>
+
+<div id="comentarios-listado">
+</div>
+
+<h3>Agregar comentario</h3>
+<form id="form-comentario">
+  <label>Nombre:</label><br>
+  <input type="text" name="nombre" required minlength="3" maxlength="80"><br>
+
+  <label>Comentario:</label><br>
+  <textarea name="texto" rows="4" cols="50" required minlength="5"></textarea><br>
+
+  <button type="submit">Agregar comentario</button>
+</form>
+
+<div id="error-comentario" style="color: red;"></div>
+
 <script>
-  function mostrarModal(src) {
+  const mostrarModal = (src) => {
     document.getElementById("modal-img").src = src;
     document.getElementById("modal").style.display = "block";
   }
-  function cerrarModal() {
+  const cerrarModal = () => {
     document.getElementById("modal").style.display = "none";
   }
 </script>
+<script>
+  const actividadId = {{ data.actividad.id | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/comentarios.js') }}"></script>
 
 </body>
 </html>

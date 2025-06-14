@@ -50,20 +50,53 @@ En la siguiente entrega, se moverá el script con region_comuna de informar_acti
 También salieron varios errores de este tipo:
 
 warning: in the working copy of 'flask_app/app.py', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/database/create_user.sql', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/database/db.py', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/database/region-comuna.sql', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/database/tarea2.sql', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/static/css/styles.css', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/static/js/validation.js', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'flask_app/templates/informar_actividad.html', LF will be replaced by CRLF the next time Git touches it       
-warning: in the working copy of 'flask_app/utils/validations.py', LF will be replaced by CRLF the next time Git touches it
 
-warning: in the working copy of 'venv/Lib/site-packages/zipp/__init__.py', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'venv/Lib/site-packages/zipp/_functools.py', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'venv/Lib/site-packages/zipp/compat/overlay.py', LF will be replaced by CRLF the next time Git touches it
-warning: in the working copy of 'venv/Lib/site-packages/zipp/compat/py310.py', LF will be replaced by CRLF the next time Git touches it       
-warning: in the working copy of 'venv/Lib/site-packages/zipp/glob.py', LF will be replaced by CRLF the next time Git touches it
+Finalmente se optó por borrar los venv, y todo pareció ir en orden.
 
+**Tarea 3:**
 
-Se intentó borrar los venv
+Para probar la tarea:
+
+-Considerar el archivo requirements.txt para los requerimientos de liberías de Python y demases.
+
+-En vez de utilizar el archivo tarea2.sql completo y el archivo tabla-comentario.sql, se hace Run al archivo database/init_db.py
+
+-Posteriormente, se hace Run a todo el archivo database/region-comuna.sql
+
+Si algo falla, puede intentar correr create.user.sql antes de las instrucciones, y algunas de las primeras consultas en tarea2.sql, mientras estas no sean para crear tablas (CREATE TABLE)
+
+En el peor de los casos, probar con tarea2.sql y tabla-comentario.sql en vez de init_db.py, y/o contactar en lo posible por U-cursos u otro medio.
+
+```bash
+cd flask_app
+
+py -m venv venv
+
+venv/Scripts/activate
+
+pip install -r requirements.txt
+
+database/init_db.py
+
+flask run
+```
+
+Puede que al subir la tarea a git, éste no reconozca la carpeta vacía 'static/uploads' (caso que me sucedió en la tarea 2), por lo que dejaré una imagen de placeholder para que sí se suba al repositorio.
+
+Para las llamadas asincrónicas, se decidió utilizar el estilo fetch().then().catch() dado que resultaba más cómodo y sobre todo intuitivo.
+
+Para la generación de gráficos se utilizó la URL "https://cdn.jsdelivr.net/npm/chart.js".
+
+Para la entrega 4 se ahondará más en el diseño visual (CSS), dado que actualmente es bastante pobre y poco intuitivo/llamativo para el usuario (por ejemplo, crear un tipo de caja para cada comentario, como en el auxiliar 8)
+
+Se utilizó lo siguiente en estadisticas.js para que los gráficos queden dentro de los márgenes definidos en su estilo (de lo contario, se veían desproporcionadamente grandes).
+```js
+options: {
+    responsive: true,
+    maintainAspectRatio: false
+}
+```
+
+También se decidió el consenso de usar 'const f = (x,y) => {}' en vez de 'function f(x,y){}' en los scripts JS.
+
+Nuevamente, Jinja2 funciona con autoescaping, por lo que se omite usar la función escape() (explicado más a detalle en la entrega de la tarea 2).
