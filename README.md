@@ -76,7 +76,7 @@ venv/Scripts/activate
 
 pip install -r requirements.txt
 
-database/init_db.py
+venv\Scripts\python.exe database/init_db.py
 
 flask run
 ```
@@ -100,3 +100,32 @@ options: {
 También se decidió el consenso de usar 'const f = (x,y) => {}' en vez de 'function f(x,y){}' en los scripts JS.
 
 Nuevamente, Jinja2 funciona con autoescaping, por lo que se omite usar la función escape() (explicado más a detalle en la entrega de la tarea 2).
+
+
+
+**Tarea 4:**
+En el folder 'tarea4' se incluyen las funcionalidades de Java-Springboot para la evaluación de actividades, mientras que en el folder 'flask_app' se incluyen las funcionalidades de las tareas anteriores.
+
+Para cargar datos en la base de datos usando el formulario:
+
+```bash
+cd flask_app
+
+py -m venv venv
+
+venv/Scripts/activate
+
+pip install -r requirements.txt
+
+venv\Scripts\python.exe database/init_db.py
+
+flask run
+```
+
+No se incluyó el archivo 'src/main/resources/application.properties' al subir el proyecto a Github, debido al contenido de información sensible
+
+Nuevamente se utilizó el formato fetch().then().catch() en 'nota.js' para mayor intuición.
+
+Se crearon modelos-servicios-controladores para notas y actividades por separado, dadas las distintas funcionalidades y para tener un mayor orden entre sus interacciones.
+
+Se importó 'jakarta.persistence.Column' para poder nombrar los atributos en los archivos .java con nombre distinto (por ejemplo, 'actividadId' en vez de 'actividad_id').

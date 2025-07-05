@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<title>Inicio</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/listado_actividades__nota_style.css}">
+</head>
+
+<body>
+
+<nav>
+  <ul style="list-style: none; padding: 0;">
+    <a th:href="@{/informar_actividad}">Informar Actividad</a>
+    <a th:href="@{/listado_actividades}">Listado de Actividades</a>
+    <a th:href="@{/estadisticas}">Estadísticas</a>
+  </ul>
+</nav>
+
+<div id="actividad-nota">
+  <table>
+      <tr>
+        <th>ID</th>
+        <th>Fecha Inicio</th>
+        <th>Sector</th>
+        <th>Nombre</th>
+        <th>Tema</th>
+        <th>Nota</th>
+        <th></th>
+      </tr>
+
+      <tr th:each="actividad : ${actividades}">
+        <td th:text="${actividad.id}"></td>
+        <td th:text="${actividad.diaHoraInicio}"></td>
+        <td th:text="${actividad.sector}"></td>
+        <td th:text="${actividad.nombre}"></td>
+        <td>
+        <div th:each="tema : ${actividad.temas}">
+            <span th:if="${tema.tema == 'otro'}">-<span th:text="${tema.glosaOtro}"></span></span>
+            <span th:if="${tema.tema != 'otro'}">-<span th:text="${tema.tema}"></span></span>
+        </div>
+        </td>
+        <td>
+          <span th:text="${actividad.promedioNota >= 0 ? actividad.promedioNota : '-'}"></span>
+        </td>
+
+        <td>
+          <a href="#" th:onclick="'evaluarActividad(' + ${actividad.id} + ')'">evaluar</a>
+        </td>
+      </tr>
+  </table>
+</div>
+
+<script th:src="@{/js/nota.js}"></script>
+</body>
+</html>
